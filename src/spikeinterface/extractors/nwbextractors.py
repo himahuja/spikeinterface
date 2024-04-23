@@ -2,13 +2,14 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Union, List, Optional, Literal, Dict, BinaryIO
 import warnings
+import bisect
 
 import numpy as np
 
 from spikeinterface import get_global_tmp_folder
 from spikeinterface.core import BaseRecording, BaseRecordingSegment, BaseSorting, BaseSortingSegment
 from spikeinterface.core.core_tools import define_function_from_class
-
+from bisect import bisect_right
 
 def import_lazily():
     "Makes annotations / typing available lazily"
@@ -471,8 +472,10 @@ class _NWBHDF5RecordingExtractor(BaseRecording):
             sampling_frequency = electrical_series["starting_time"].attrs["rate"]
         elif "timestamps" in electrical_series.keys():
             timestamps = electrical_series["timestamps"][:]
-            t_start = timestamps[0]
-            sampling_frequency = 1.0 / np.median(np.diff(timestamps[:samples_for_rate_estimation]))
+            t_start_idx = bisect.bisect_right(timestamps, -1)
+            # t_start_idx = electrical_series.timestamps
+            t_start = timestamps[t_start_idx]
+            sampling_frequency = 1.0 / np.median(np.diff(timestamps[t_start_idx:(t_start_idx+samples_for_rate_estimation)]))
 
         if load_time_vector and timestamps is not None:
             times_kwargs = dict(time_vector=electrical_series.timestamps)
