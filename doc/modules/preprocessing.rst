@@ -32,7 +32,7 @@ These two preprocessors will not compute anything at instantiation, but the comp
 
     traces = recording_cmr.get_traces(start_frame=100_000, end_frame=200_000)
 
-Some internal sorters (see :ref:`si_based`) can work directly on these preprocessed objects so there is no need to
+Some internal sorters (see :ref:`modules/sorters:Internal Sorters`) can work directly on these preprocessed objects so there is no need to
 save the object:
 
 .. code-block:: python
@@ -230,6 +230,8 @@ The :code:`detect_bad_channels()` can be used to detect bad channels with severa
 approach to detect bad channels with abnormally high power and the :code:`coherence+psd` method (introduced by [IBL_spikesorting]_),
 which detects bad channels looking at both coherence with other channels and PSD power in the high-frequency range.
 
+Note: The :code:`coherence+psd` method must be run on individual probes/shanks separately since it uses the coherence of the signal across the depth of the probe. See `Processing a Recording by Channel Group <https://spikeinterface.readthedocs.io/en/latest/how_to/process_by_channel_group.html?highlight=split_by>`_ for more information.
+
 The function returns both the :code:`bad_channel_ids` and :code:`channel_labels`, which can be :code:`good`, :code:`noise`, :code:`dead`,
 or :code:`out` (outside of the brain). Note that the :code:`dead` and :code:`out` are only available with the :code:`coherence+psd` method.
 
@@ -308,6 +310,24 @@ required.
     rec_with_more_channels = zero_channel_pad(parent_recording=rec, num_channels=128)
 
 * :py:func:`~spikeinterface.preprocessing.zero_channel_pad()`
+
+
+gaussian_filter()
+^^^^^^^^^^^^^^^^^
+
+Implementation of a gaussian filter for high/low/bandpass filters. Note that the the gaussian filter
+response is not very steep.
+
+.. code-block:: python
+
+    # highpass
+    rec_hp = gaussian_filter(recording=rec, freq_min=300, freq_max=None)
+    # lowpass
+    rec_lp = gaussian_filter(recording=rec, freq_min=None, freq_max=500)
+    # bandpass
+    rec_bp = gaussian_filter(recording=rec, freq_min=300, freq_max=2000)
+
+* :py:func:`~spikeinterface.preprocessing.gaussian_filter()`
 
 
 Motion/drift correction
