@@ -472,6 +472,7 @@ class _NWBHDF5RecordingExtractor(BaseRecording):
             sampling_frequency = electrical_series["starting_time"].attrs["rate"]
         else:
             sampling_frequency = 30000
+            t_start = 0
         # elif "timestamps" in electrical_series.keys():
         #     timestamps = electrical_series["timestamps"][:]
         #     t_start_idx = bisect.bisect_right(timestamps, -1)
@@ -479,10 +480,10 @@ class _NWBHDF5RecordingExtractor(BaseRecording):
         #     t_start = timestamps[t_start_idx]
         #     sampling_frequency = 1.0 / np.median(np.diff(timestamps[t_start_idx:(t_start_idx+samples_for_rate_estimation)]))
 
-        if load_time_vector and timestamps is not None:
-            times_kwargs = dict(time_vector=electrical_series.timestamps)
-        else:
-            times_kwargs = dict(sampling_frequency=sampling_frequency, t_start=t_start)
+        # if load_time_vector and timestamps is not None:
+        #     times_kwargs = dict(time_vector=electrical_series.timestamps)
+        # else:
+        times_kwargs = dict(sampling_frequency=sampling_frequency, t_start=t_start)
 
         if "group_name" in electrode_table_columns:
             unique_electrode_group_names = list(np.unique(electrodes_table["group_name"][:]))
