@@ -470,12 +470,14 @@ class _NWBHDF5RecordingExtractor(BaseRecording):
         if "starting_time" in electrical_series.keys():
             t_start = electrical_series["starting_time"][()]
             sampling_frequency = electrical_series["starting_time"].attrs["rate"]
-        elif "timestamps" in electrical_series.keys():
-            timestamps = electrical_series["timestamps"][:]
-            t_start_idx = bisect.bisect_right(timestamps, -1)
-            # t_start_idx = electrical_series.timestamps
-            t_start = timestamps[t_start_idx]
-            sampling_frequency = 1.0 / np.median(np.diff(timestamps[t_start_idx:(t_start_idx+samples_for_rate_estimation)]))
+        else:
+            sampling_frequency = 30000
+        # elif "timestamps" in electrical_series.keys():
+        #     timestamps = electrical_series["timestamps"][:]
+        #     t_start_idx = bisect.bisect_right(timestamps, -1)
+        #     # t_start_idx = electrical_series.timestamps
+        #     t_start = timestamps[t_start_idx]
+        #     sampling_frequency = 1.0 / np.median(np.diff(timestamps[t_start_idx:(t_start_idx+samples_for_rate_estimation)]))
 
         if load_time_vector and timestamps is not None:
             times_kwargs = dict(time_vector=electrical_series.timestamps)
