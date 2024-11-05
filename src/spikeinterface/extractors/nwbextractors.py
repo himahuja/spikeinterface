@@ -743,10 +743,13 @@ class NwbRecordingExtractor(BaseRecording, _BaseNWBExtractor):
         if "starting_time" in electrical_series.keys():
             t_start = electrical_series["starting_time"][()]
             sampling_frequency = electrical_series["starting_time"].attrs["rate"]
-        elif "timestamps" in electrical_series.keys():
-            timestamps = electrical_series["timestamps"][:]
-            t_start = timestamps[0]
-            sampling_frequency = 1.0 / np.median(np.diff(timestamps[:samples_for_rate_estimation]))
+
+        else:
+            sampling_frequency = 30000   
+        # elif "timestamps" in electrical_series.keys():
+        #     timestamps = electrical_series["timestamps"][:]
+        #     t_start = timestamps[0]
+        #     sampling_frequency = 1.0 / np.median(np.diff(timestamps[:samples_for_rate_estimation]))
 
         if load_time_vector and timestamps is not None:
             times_kwargs = dict(time_vector=electrical_series["timestamps"])
